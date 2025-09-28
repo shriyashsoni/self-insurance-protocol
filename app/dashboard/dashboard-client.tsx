@@ -5,25 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Progress } from "@/components/ui/progress"
-import {
-  Shield,
-  Plane,
-  Cloud,
-  Heart,
-  DollarSign,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  TrendingUp,
-  MapPin,
-  Activity,
-} from "lucide-react"
+import { Shield, Plane, Cloud, Heart, Clock, CheckCircle, XCircle, AlertTriangle, Activity } from "lucide-react"
 import { useWallet } from "@/lib/wallet/wallet-context"
 import { OracleStatus } from "@/components/oracle-status"
 import { TransactionStatus } from "@/components/transaction-status"
 import { formatDistanceToNow } from "date-fns"
+import { PolicyManagementCard } from "@/components/policy-management-card"
+import { PolicyQuickActions } from "@/components/policy-quick-actions"
 
 interface DashboardStats {
   totalPolicies: number
@@ -71,7 +59,9 @@ export function DashboardClient() {
   const [policies, setPolicies] = useState<UserPolicy[]>([])
   const [claims, setClaims] = useState<ClaimHistory[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  // const [verificationStatus, setVerificationStatus] = useState<string>("not_started")
+  const [filteredPolicies, setFilteredPolicies] = useState<UserPolicy[]>([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filterType, setFilterType] = useState("all")
 
   useEffect(() => {
     if (address && isConnected) {
@@ -88,7 +78,6 @@ export function DashboardClient() {
       const [policiesRes, claimsRes] = await Promise.all([
         fetch(`/api/policies/user?address=${address}`),
         fetch(`/api/claims/user?address=${address}`),
-        // fetch(`/api/verification/status?address=${address}`),
       ])
 
       if (policiesRes.ok) {
@@ -119,11 +108,6 @@ export function DashboardClient() {
         const pendingClaims = userClaims.filter((c: ClaimHistory) => c.status === "pending").length
         setStats((prev) => ({ ...prev, pendingClaims }))
       }
-
-      // if (verificationRes.ok) {
-      //   const verification = await verificationRes.json()
-      //   setVerificationStatus(verification.status)
-      // }
     } catch (error) {
       console.error("Failed to load dashboard data:", error)
     } finally {
@@ -173,6 +157,64 @@ export function DashboardClient() {
     }
   }
 
+  useEffect(() => {
+    let filtered = policies
+
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (policy) =>
+          policy.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          policy.conditions.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          policy.location?.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
+    }
+
+    // Apply status filter
+    if (filterType !== "all") {
+      filtered = filtered.filter((policy) => policy.status === filterType)
+    }
+
+    setFilteredPolicies(filtered)
+  }, [policies, searchTerm, filterType])
+
+  const handleViewDetails = (policyId: string) => {
+    console.log("[v0] Viewing policy details:", policyId)
+    // Navigate to policy details page
+  }
+
+  const handleFileClaim = (policyId: string) => {
+    console.log("[v0] Filing claim for policy:", policyId)
+    // Open claim filing modal
+  }
+
+  const handleRenewPolicy = (policyId: string) => {
+    console.log("[v0] Renewing policy:", policyId)
+    // Open policy renewal flow
+  }
+
+  const handleNewPolicy = () => {
+    window.location.href = "/policies"
+  }
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term)
+  }
+
+  const handleFilter = (filter: string) => {
+    setFilterType(filter)
+  }
+
+  const handleExport = () => {
+    console.log("[v0] Exporting policy data")
+    // Export policies to CSV/PDF
+  }
+
+  const handleNotifications = () => {
+    console.log("[v0] Opening notifications")
+    // Show notifications panel
+  }
+
   if (!isConnected) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -187,65 +229,23 @@ export function DashboardClient() {
     )
   }
 
-  // if (verificationStatus !== "completed") {
-  //   return (
-  //     <div className="space-y-6">
-  //       <SelfVerificationFlow
-  //         onVerificationComplete={() => setVerificationStatus("completed")}
-  //         requiredForPurchase={true}
-  //       />
-  //     </div>
-  //   )
-  // }
-
   return (
     <div className="space-y-6">
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="border-border/50">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Policies</CardTitle>
-            <Shield className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalPolicies}</div>
-            <p className="text-xs text-muted-foreground">{stats.activePolicies} active</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Premiums Paid</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${stats.totalPremiumsPaid.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">Total invested</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Payouts Received</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-400">${stats.totalPayoutsReceived.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">Claims processed</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Claims</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-yellow-400">{stats.pendingClaims}</div>
-            <p className="text-xs text-muted-foreground">Under review</p>
-          </CardContent>
-        </Card>
-      </div>
+      <PolicyQuickActions
+        stats={{
+          totalPolicies: stats.totalPolicies,
+          activePolicies: stats.activePolicies,
+          expiringPolicies: policies.filter(
+            (p) => p.status === "active" && p.expiresAt.getTime() - Date.now() < 7 * 24 * 60 * 60 * 1000, // 7 days
+          ).length,
+          pendingClaims: stats.pendingClaims,
+        }}
+        onNewPolicy={handleNewPolicy}
+        onSearch={handleSearch}
+        onFilter={handleFilter}
+        onExport={handleExport}
+        onNotifications={handleNotifications}
+      />
 
       {/* Main Dashboard Content */}
       <Tabs defaultValue="policies" className="space-y-6">
@@ -257,98 +257,43 @@ export function DashboardClient() {
         </TabsList>
 
         <TabsContent value="policies" className="space-y-6">
-          {policies.length === 0 ? (
+          {filteredPolicies.length === 0 ? (
             <Card className="border-border/50">
               <CardHeader className="text-center">
                 <Shield className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <CardTitle>No Policies Yet</CardTitle>
-                <CardDescription>You haven't purchased any insurance policies yet</CardDescription>
+                <CardTitle>{policies.length === 0 ? "No Policies Yet" : "No Matching Policies"}</CardTitle>
+                <CardDescription>
+                  {policies.length === 0
+                    ? "You haven't purchased any insurance policies yet"
+                    : "No policies match your current search or filter criteria"}
+                </CardDescription>
               </CardHeader>
               <CardContent className="text-center">
-                <Button asChild>
-                  <a href="/policies">Browse Policies</a>
-                </Button>
+                {policies.length === 0 ? (
+                  <Button onClick={handleNewPolicy}>Browse Policies</Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSearchTerm("")
+                      setFilterType("all")
+                    }}
+                  >
+                    Clear Filters
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {policies.map((policy) => (
-                <Card key={policy.id} className="border-border/50">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {getPolicyIcon(policy.type)}
-                        <CardTitle className="text-lg">{policy.title}</CardTitle>
-                      </div>
-                      <Badge className={getStatusColor(policy.status)}>{policy.status}</Badge>
-                    </div>
-                    <CardDescription>{policy.conditions}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <div className="text-muted-foreground">Premium Paid</div>
-                        <div className="font-medium">${policy.premium}</div>
-                      </div>
-                      <div>
-                        <div className="text-muted-foreground">Payout Amount</div>
-                        <div className="font-medium">${policy.payout}</div>
-                      </div>
-                      <div>
-                        <div className="text-muted-foreground">Purchased</div>
-                        <div className="font-medium">
-                          {formatDistanceToNow(policy.purchasedAt, { addSuffix: true })}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-muted-foreground">Expires</div>
-                        <div className="font-medium">{formatDistanceToNow(policy.expiresAt, { addSuffix: true })}</div>
-                      </div>
-                    </div>
-
-                    {policy.location && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <MapPin className="h-4 w-4" />
-                        {policy.location}
-                      </div>
-                    )}
-
-                    {policy.status === "active" && (
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Time remaining</span>
-                          <span>{formatDistanceToNow(policy.expiresAt)}</span>
-                        </div>
-                        <Progress
-                          value={Math.max(
-                            0,
-                            Math.min(
-                              100,
-                              ((policy.expiresAt.getTime() - Date.now()) /
-                                (policy.expiresAt.getTime() - policy.purchasedAt.getTime())) *
-                                100,
-                            ),
-                          )}
-                          className="h-2"
-                        />
-                      </div>
-                    )}
-
-                    {policy.status === "claimed" && policy.claimAmount && (
-                      <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
-                        <div className="flex items-center gap-2 text-green-400 text-sm font-medium">
-                          <CheckCircle className="h-4 w-4" />
-                          Claim Paid: ${policy.claimAmount}
-                        </div>
-                        {policy.claimDate && (
-                          <div className="text-xs text-muted-foreground mt-1">
-                            Processed {formatDistanceToNow(policy.claimDate, { addSuffix: true })}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+              {filteredPolicies.map((policy) => (
+                <PolicyManagementCard
+                  key={policy.id}
+                  policy={policy}
+                  onViewDetails={handleViewDetails}
+                  onFileClaim={handleFileClaim}
+                  onRenew={handleRenewPolicy}
+                />
               ))}
             </div>
           )}

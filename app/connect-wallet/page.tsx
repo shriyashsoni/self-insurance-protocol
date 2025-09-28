@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { WalletConnect } from "@/components/wallet-connect"
+import { SelfVerificationCard } from "@/components/self-verification-card"
 import { useWallet } from "@/lib/wallet/wallet-context"
 import { createClient } from "@/lib/supabase/client"
 import { CheckCircle, ArrowRight, Shield, Zap, Lock } from "lucide-react"
@@ -14,32 +15,44 @@ export default function ConnectWalletPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [verificationComplete, setVerificationComplete] = useState(false)
 
   useEffect(() => {
     checkAuth()
   }, [])
 
   useEffect(() => {
-    if (isConnected && address && user) {
+    if (isConnected && address && user && verificationComplete) {
       setTimeout(() => {
         router.push("/dashboard")
-      }, 2000) // Give user time to see success state
+      }, 2000)
     }
-  }, [isConnected, address, user, router])
+  }, [isConnected, address, user, verificationComplete, router])
 
   const checkAuth = async () => {
-    const supabase = createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+    try {
+      const supabase = createClient()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
 
-    if (!user) {
+      if (!user) {
+        router.push("/auth/login")
+        return
+      }
+
+      setUser(user)
+    } catch (error) {
+      console.error("[v0] Auth check error:", error)
       router.push("/auth/login")
-      return
+    } finally {
+      setIsLoading(false)
     }
+  }
 
-    setUser(user)
-    setIsLoading(false)
+  const handleVerificationComplete = (verificationData: any) => {
+    console.log("[v0] Verification completed:", verificationData)
+    setVerificationComplete(true)
   }
 
   const handleContinue = () => {
@@ -56,7 +69,7 @@ export default function ConnectWalletPage() {
 
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 bg-background">
-      <div className="w-full max-w-2xl space-y-6">
+      <div className="w-full max-w-4xl space-y-6">
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center">
@@ -67,7 +80,7 @@ export default function ConnectWalletPage() {
           <div>
             <h1 className="text-3xl font-bold text-balance mb-2">Welcome to Insurance Protocol</h1>
             <p className="text-muted-foreground text-lg">
-              Connect your wallet to start purchasing parametric insurance policies
+              Connect your wallet and verify your identity to start purchasing parametric insurance policies
             </p>
           </div>
         </div>
@@ -87,8 +100,20 @@ export default function ConnectWalletPage() {
           </Card>
         )}
 
-        {/* Wallet Connection */}
-        <WalletConnect />
+        {/* Main Connection Flow */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Wallet Connection */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Step 1: Connect Wallet</h2>
+            <WalletConnect />
+          </div>
+
+          {/* Self Protocol Verification */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Step 2: Verify Identity</h2>
+            <SelfVerificationCard onVerificationComplete={handleVerificationComplete} />
+          </div>
+        </div>
 
         {/* Features Overview */}
         {!isConnected && (
@@ -126,14 +151,16 @@ export default function ConnectWalletPage() {
         )}
 
         {/* Success State */}
-        {isConnected && address && (
+        {isConnected && address && verificationComplete && (
           <Card className="bg-green-500/10 border-green-500/20">
             <CardContent className="pt-6">
               <div className="text-center space-y-4">
                 <CheckCircle className="h-12 w-12 text-green-400 mx-auto" />
                 <div>
-                  <h3 className="text-lg font-medium text-green-400">Wallet Connected Successfully!</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Redirecting to your dashboard...</p>
+                  <h3 className="text-lg font-medium text-green-400">Setup Complete!</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Wallet connected and identity verified. Redirecting to your dashboard...
+                  </p>
                 </div>
                 <Button onClick={handleContinue} className="bg-primary text-primary-foreground hover:bg-primary/90">
                   Continue to Dashboard
