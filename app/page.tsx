@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Shield, Zap, Globe, ArrowRight, Calendar, Heart, Plane, CloudRain, Building, Luggage } from "lucide-react"
+import { Shield, Zap, Globe, Lock, ArrowRight, CheckCircle } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useWallet } from "@/lib/wallet/wallet-context"
 import { Navigation } from "@/components/navigation"
@@ -28,6 +28,8 @@ export default function HomePage() {
     } = await supabase.auth.getUser()
     setUser(user)
     setIsLoading(false)
+
+    // Previously redirected to /connect-wallet or /dashboard automatically
   }
 
   if (isLoading) {
@@ -42,101 +44,32 @@ export default function HomePage() {
     <div className="min-h-screen bg-background">
       <Navigation />
 
-      <section className="bg-primary text-primary-foreground py-3 px-6 text-center">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-sm font-medium">
-            {"✈️ New: Travel Insurance Protocol now live! Protect your trips from unexpected disruptions "}
-            <Link href="/policies" className="underline hover:no-underline">
-              Get covered now
-            </Link>
-          </p>
-        </div>
-      </section>
-
+      {/* Hero Section */}
       <section className="relative py-20 px-6 md:px-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left side - Text content */}
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <Badge variant="secondary" className="bg-accent/10 text-accent-foreground border-accent/20">
-                  Powered by Smart Contracts & Chainlink Oracles
-                </Badge>
-                <h1 className="text-5xl md:text-6xl font-bold text-foreground leading-tight text-balance">
-                  Protect your travels with <span className="text-primary">smart insurance</span>
-                </h1>
-                <p className="text-xl text-muted-foreground max-w-2xl leading-relaxed text-pretty">
-                  Get automated payouts when weather, flight delays, or travel disruptions affect your trip.
-                  Blockchain-powered protection that actually works.
-                </p>
-              </div>
+        <div className="max-w-7xl mx-auto text-center space-y-8">
+          <div className="space-y-4">
+            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+              Powered by Self Protocol & Blockchain Oracles
+            </Badge>
+            <h1 className="text-5xl md:text-7xl font-bold text-foreground leading-tight">
+              The complete platform to <span className="text-primary">secure your future</span>
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              Privacy-preserving parametric insurance powered by blockchain technology. Verify your identity securely
+              and get instant payouts when conditions are met.
+            </p>
+          </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                  <Link href="/auth/sign-up">
-                    Get started—it's free
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="border-border text-foreground bg-transparent">
-                  <Link href="/policies">View coverage options</Link>
-                </Button>
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="travel-card max-w-md mx-auto">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-foreground">Travel Protection</h3>
-                    <Badge className="bg-accent text-accent-foreground">+150% coverage</Badge>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <Plane className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm">Flight Protection</p>
-                        <p className="text-xs text-muted-foreground">{"Delays > 4hrs trigger payout"}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
-                      <div className="p-2 bg-accent/10 rounded-lg">
-                        <CloudRain className="h-5 w-5 text-accent" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm">Weather Coverage</p>
-                        <p className="text-xs text-muted-foreground">Severe weather protection</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
-                      <div className="p-2 bg-chart-4/10 rounded-lg">
-                        <Luggage className="h-5 w-5" style={{ color: "oklch(0.6 0.15 330)" }} />
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm">Baggage Insurance</p>
-                        <p className="text-xs text-muted-foreground">Lost & delayed baggage</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-border">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Premium</span>
-                      <span className="font-semibold">0.01 ETH</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Coverage</span>
-                      <span className="font-semibold text-primary">0.15 ETH</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <Link href="/auth/sign-up">
+                Get Started
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="border-border text-foreground bg-transparent">
+              <Link href="/policies">Explore Policies</Link>
+            </Button>
           </div>
         </div>
       </section>
@@ -144,207 +77,136 @@ export default function HomePage() {
       {/* Stats Section */}
       <section className="py-16 px-6 md:px-10 border-t border-border">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="travel-stat">
-              <div className="travel-stat-number">0.01 ETH</div>
-              <div className="travel-stat-label">Starting Premium</div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="text-center space-y-2">
+              <div className="text-3xl font-bold text-foreground">$2.5M</div>
+              <div className="text-sm text-muted-foreground">Total Coverage</div>
             </div>
-            <div className="travel-stat">
-              <div className="travel-stat-number">24/7</div>
-              <div className="travel-stat-label">Oracle Monitoring</div>
+            <div className="text-center space-y-2">
+              <div className="text-3xl font-bold text-foreground">98%</div>
+              <div className="text-sm text-muted-foreground">Payout Accuracy</div>
             </div>
-            <div className="travel-stat">
-              <div className="travel-stat-number">Instant</div>
-              <div className="travel-stat-label">Automated Payouts</div>
+            <div className="text-center space-y-2">
+              <div className="text-3xl font-bold text-foreground">5min</div>
+              <div className="text-sm text-muted-foreground">Claim Processing</div>
             </div>
-            <div className="travel-stat">
-              <div className="travel-stat-number">100%</div>
-              <div className="travel-stat-label">Blockchain Secured</div>
+            <div className="text-center space-y-2">
+              <div className="text-3xl font-bold text-foreground">24/7</div>
+              <div className="text-sm text-muted-foreground">Oracle Monitoring</div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Features Section */}
       <section className="py-20 px-6 md:px-10">
         <div className="max-w-7xl mx-auto space-y-16">
           <div className="text-center space-y-4">
-            <h2 className="text-4xl font-bold text-foreground text-balance">How travel insurance works</h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">
-              Four simple steps to protect your trip from unexpected disruptions
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="travel-card text-center">
-              <CardHeader>
-                <div className="flex justify-center mb-4">
-                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
-                    <Calendar className="h-8 w-8 text-primary" />
-                  </div>
-                </div>
-                <CardTitle className="text-card-foreground">1. Plan Your Trip</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-muted-foreground">
-                  Set your travel dates, destination, and trip type. Our smart contracts handle the rest.
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="travel-card text-center">
-              <CardHeader>
-                <div className="flex justify-center mb-4">
-                  <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">
-                    <Shield className="h-8 w-8 text-accent" />
-                  </div>
-                </div>
-                <CardTitle className="text-card-foreground">2. Choose Coverage</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-muted-foreground">
-                  Select flight, weather, baggage, or comprehensive protection based on your travel needs.
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="travel-card text-center">
-              <CardHeader>
-                <div className="flex justify-center mb-4">
-                  <div className="p-3 rounded-lg bg-chart-4/10 border border-chart-4/20">
-                    <Zap className="h-8 w-8" style={{ color: "oklch(0.6 0.15 330)" }} />
-                  </div>
-                </div>
-                <CardTitle className="text-card-foreground">3. Oracle Monitoring</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-muted-foreground">
-                  Chainlink oracles automatically monitor flights, weather, and travel conditions 24/7.
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="travel-card text-center">
-              <CardHeader>
-                <div className="flex justify-center mb-4">
-                  <div className="p-3 rounded-lg bg-chart-3/10 border border-chart-3/20">
-                    <Plane className="h-8 w-8" style={{ color: "oklch(0.6 0.2 160)" }} />
-                  </div>
-                </div>
-                <CardTitle className="text-card-foreground">4. Get Paid</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-muted-foreground">
-                  Automatic payouts when conditions are met. No paperwork, no waiting, no hassle.
-                </CardDescription>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 px-6 md:px-10 border-t border-border">
-        <div className="max-w-7xl mx-auto space-y-16">
-          <div className="text-center space-y-4">
-            <h2 className="text-4xl font-bold text-foreground text-balance">Complete travel protection</h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">
-              Comprehensive coverage for every type of travel, from business trips to family vacations.
+            <h2 className="text-4xl font-bold text-foreground">Faster protection. More innovation.</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              The platform for instant parametric insurance. Let blockchain oracles handle verification while you focus
+              on what matters most.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="travel-card">
+            <Card className="bg-card border-border">
               <CardHeader>
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
-                    <Plane className="h-6 w-6 text-primary" />
+                    <Shield className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="text-card-foreground">Flight Protection</CardTitle>
+                  <CardTitle className="text-card-foreground">Privacy-First Verification</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-muted-foreground">
-                  Flight delays, cancellations, or missed connections that disrupt your travel plans.
+                  Verify your identity using Self Protocol's zero-knowledge proofs. No personal data stored on-chain,
+                  maximum privacy protection.
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="travel-card">
+            <Card className="bg-card border-border">
               <CardHeader>
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-accent/10 border border-accent/20">
-                    <CloudRain className="h-6 w-6 text-accent" />
+                    <Zap className="h-6 w-6 text-accent" />
                   </div>
-                  <CardTitle className="text-card-foreground">Weather Coverage</CardTitle>
+                  <CardTitle className="text-card-foreground">Instant Payouts</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-muted-foreground">
-                  Severe weather conditions that force trip cancellations or significant delays.
+                  Automatic claim processing powered by Chainlink and Pyth oracles. Get paid instantly when conditions
+                  are met.
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="travel-card">
+            <Card className="bg-card border-border">
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-chart-4/10 border border-chart-4/20">
-                    <Luggage className="h-6 w-6" style={{ color: "oklch(0.6 0.15 330)" }} />
+                  <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                    <Globe className="h-6 w-6 text-blue-400" />
                   </div>
-                  <CardTitle className="text-card-foreground">Baggage Insurance</CardTitle>
+                  <CardTitle className="text-card-foreground">Global Coverage</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-muted-foreground">
-                  Lost, stolen, or delayed baggage that affects your travel experience.
+                  Flight delays, weather events, health emergencies - comprehensive parametric insurance for global
+                  risks.
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="travel-card">
+            <Card className="bg-card border-border">
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-chart-3/10 border border-chart-3/20">
-                    <Heart className="h-6 w-6" style={{ color: "oklch(0.6 0.2 160)" }} />
+                  <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
+                    <Lock className="h-6 w-6 text-green-400" />
                   </div>
-                  <CardTitle className="text-card-foreground">Medical Coverage</CardTitle>
+                  <CardTitle className="text-card-foreground">Blockchain Security</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-muted-foreground">
-                  Medical emergencies or illness that prevent you from traveling or continuing your trip.
+                  Policies minted as Soulbound Tokens (SBTs) on Celo blockchain. Transparent, immutable, and secure.
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="travel-card">
+            <Card className="bg-card border-border">
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-chart-5/10 border border-chart-5/20">
-                    <Building className="h-6 w-6" style={{ color: "oklch(0.5 0.15 180)" }} />
+                  <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                    <CheckCircle className="h-6 w-6 text-purple-400" />
                   </div>
-                  <CardTitle className="text-card-foreground">Accommodation Protection</CardTitle>
+                  <CardTitle className="text-card-foreground">No Claims Process</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-muted-foreground">
-                  Hotel cancellations, overbooking, or accommodation issues that affect your stay.
+                  Skip traditional claims paperwork. Oracle data automatically triggers payouts when parametric
+                  conditions are met.
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="travel-card">
+            <Card className="bg-card border-border">
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
-                    <Globe className="h-6 w-6 text-primary" />
+                  <div className="p-2 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                    <ArrowRight className="h-6 w-6 text-orange-400" />
                   </div>
-                  <CardTitle className="text-card-foreground">Comprehensive Plans</CardTitle>
+                  <CardTitle className="text-card-foreground">Easy Integration</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-muted-foreground">
-                  All-in-one protection combining flight, weather, baggage, and medical coverage for complete peace of
-                  mind.
+                  Simple wallet connection, Self SDK verification, and policy purchase. Get protected in minutes, not
+                  days.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -352,25 +214,26 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* CTA Section */}
       <section className="py-20 px-6 md:px-10 border-t border-border">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <div className="space-y-4">
-            <h2 className="text-4xl font-bold text-foreground text-balance">Ready to protect your travels?</h2>
-            <p className="text-xl text-muted-foreground text-pretty">
-              Join thousands who trust blockchain-powered insurance to keep their trips safe from unexpected
-              disruptions.
+            <h2 className="text-4xl font-bold text-foreground">Ready to secure your future?</h2>
+            <p className="text-xl text-muted-foreground">
+              Join thousands of users who trust our parametric insurance platform for instant, transparent, and secure
+              coverage.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
               <Link href="/auth/sign-up">
-                Start protecting travels
+                Start Verification
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="border-border text-foreground bg-transparent">
-              <Link href="/policies">View all coverage options</Link>
+              <Link href="/policies">View All Policies</Link>
             </Button>
           </div>
         </div>
