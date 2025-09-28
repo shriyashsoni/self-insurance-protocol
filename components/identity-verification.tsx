@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge"
 import { Loader2, Shield, CheckCircle, QrCode } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
-import { useSelf } from "@/lib/self-sdk/self-context"
 
 interface VerificationStatus {
   isVerified: boolean
@@ -26,8 +25,6 @@ export function IdentityVerification() {
   const [showQR, setShowQR] = useState(false)
   const router = useRouter()
   const supabase = createClient()
-
-  const { session, startVerification, verifyProof, error: selfError } = useSelf()
 
   useEffect(() => {
     checkVerificationStatus()
@@ -64,35 +61,32 @@ export function IdentityVerification() {
     }
   }
 
-  const startVerificationFunction = async () => {
+  const startVerification = async () => {
     setIsLoading(true)
     setShowQR(true)
 
     try {
+      // Initialize Self SDK verification flow
+      // This would integrate with the actual Self SDK
       const verificationConfig = {
         disclosures: ["country", "age_range", "sanctions_check", "document_type"],
         redirectUrl: `${window.location.origin}/verification/callback`,
       }
 
+      // Mock Self SDK integration - in real implementation, this would use Self SDK
       console.log("[v0] Starting Self SDK verification with config:", verificationConfig)
 
-      const verificationUrl = await startVerification(verificationConfig)
-
-      // For now, simulate the verification process
+      // Simulate verification process
       setTimeout(async () => {
-        const mockProof = {
+        await handleVerificationSuccess({
           country: "US",
           ageRange: "25-35",
           sanctionsCheck: "clear",
           documentType: "passport",
           nullifier: "mock_nullifier_" + Date.now(),
-        }
-
-        const result = await verifyProof(mockProof)
-        await handleVerificationSuccess(result)
+        })
       }, 3000)
     } catch (error) {
-      console.error("[v0] Verification start error:", error)
       setIsLoading(false)
       setShowQR(false)
     }
@@ -247,7 +241,7 @@ export function IdentityVerification() {
           </div>
         ) : (
           <Button
-            onClick={startVerificationFunction}
+            onClick={startVerification}
             disabled={isLoading}
             className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
           >
