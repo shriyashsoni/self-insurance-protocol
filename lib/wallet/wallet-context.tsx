@@ -58,63 +58,37 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   })
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      checkConnection()
-    }
+    checkConnection()
   }, [])
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.ethereum) {
       const handleAccountsChanged = (accounts: string[]) => {
-        try {
-          if (accounts.length === 0) {
-            disconnect()
-          } else {
-            setWalletState((prev) => ({
-              ...prev,
-              address: accounts[0],
-              isConnected: true,
-              error: null, // Clear any previous errors
-            }))
-            getBalance()
-          }
-        } catch (error) {
-          console.error("[v0] Error handling account change:", error)
+        if (accounts.length === 0) {
+          disconnect()
+        } else {
           setWalletState((prev) => ({
             ...prev,
-            error: "Failed to handle account change",
+            address: accounts[0],
+            isConnected: true,
           }))
+          getBalance()
         }
       }
 
       const handleChainChanged = (chainId: string) => {
-        try {
-          setWalletState((prev) => ({
-            ...prev,
-            chainId: Number.parseInt(chainId, 16),
-            error: null, // Clear any previous errors
-          }))
-        } catch (error) {
-          console.error("[v0] Error handling chain change:", error)
-          setWalletState((prev) => ({
-            ...prev,
-            error: "Failed to handle chain change",
-          }))
-        }
+        setWalletState((prev) => ({
+          ...prev,
+          chainId: Number.parseInt(chainId, 16),
+        }))
       }
 
-      try {
-        window.ethereum.on("accountsChanged", handleAccountsChanged)
-        window.ethereum.on("chainChanged", handleChainChanged)
+      window.ethereum.on("accountsChanged", handleAccountsChanged)
+      window.ethereum.on("chainChanged", handleChainChanged)
 
-        return () => {
-          if (window.ethereum) {
-            window.ethereum.removeListener("accountsChanged", handleAccountsChanged)
-            window.ethereum.removeListener("chainChanged", handleChainChanged)
-          }
-        }
-      } catch (error) {
-        console.error("[v0] Error setting up wallet event listeners:", error)
+      return () => {
+        window.ethereum.removeListener("accountsChanged", handleAccountsChanged)
+        window.ethereum.removeListener("chainChanged", handleChainChanged)
       }
     }
   }, [])
@@ -125,8 +99,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         const accounts = await window.ethereum.request({ method: "eth_accounts" })
         const chainId = await window.ethereum.request({ method: "eth_chainId" })
 
-        if (accounts && accounts.length > 0) {
-          let walletType: "metamask" | "walletconnect" | "coinbase" | null = null
+        if (accounts.length > 0) {
+          let walletType: "metamask" | "coinbase" | null = null
           if (window.ethereum.isMetaMask) {
             walletType = "metamask"
           } else if (window.ethereum.isCoinbaseWallet) {
@@ -137,18 +111,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
             ...prev,
             isConnected: true,
             address: accounts[0],
-            chainId: chainId ? Number.parseInt(chainId, 16) : null,
+            chainId: Number.parseInt(chainId, 16),
             walletType,
-            error: null, // Clear any previous errors
           }))
           await getBalance()
         }
       } catch (error) {
         console.error("[v0] Error checking wallet connection:", error)
-        setWalletState((prev) => ({
-          ...prev,
-          error: "Failed to check wallet connection",
-        }))
       }
     }
   }
@@ -294,21 +263,14 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         params: [walletState.address, "latest"],
       })
 
-      if (balance) {
-        const balanceInEther = (Number.parseInt(balance, 16) / Math.pow(10, 18)).toFixed(4)
+      const balanceInEther = (Number.parseInt(balance, 16) / Math.pow(10, 18)).toFixed(4)
 
-        setWalletState((prev) => ({
-          ...prev,
-          balance: balanceInEther,
-          error: null, // Clear any previous errors
-        }))
-      }
-    } catch (error) {
-      console.error("[v0] Error getting balance:", error)
       setWalletState((prev) => ({
         ...prev,
-        error: "Failed to get wallet balance",
+        balance: balanceInEther,
       }))
+    } catch (error) {
+      console.error("[v0] Error getting balance:", error)
     }
   }
 
