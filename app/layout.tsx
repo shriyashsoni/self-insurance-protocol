@@ -5,6 +5,7 @@ import "./globals.css"
 import { WalletProvider } from "@/lib/wallet/wallet-context"
 import { AuthProvider } from "@/lib/auth/auth-context"
 import { Toaster } from "sonner"
+import { SelfProvider } from "@/lib/self-sdk/self-context"
 
 const inter = Inter({
   variable: "--font-inter",
@@ -66,17 +67,19 @@ export default function RootLayout({
       <body className="bg-background text-foreground">
         <AuthProvider>
           <WalletProvider>
-            {children}
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                style: {
-                  background: "hsl(var(--card))",
-                  border: "1px solid hsl(var(--border))",
-                  color: "hsl(var(--card-foreground))",
-                },
-              }}
-            />
+            <SelfProvider>
+              {children}
+              <Toaster
+                position="top-right"
+                toastOptions={{
+                  style: {
+                    background: "hsl(var(--card))",
+                    border: "1px solid hsl(var(--border))",
+                    color: "hsl(var(--card-foreground))",
+                  },
+                }}
+              />
+            </SelfProvider>
           </WalletProvider>
         </AuthProvider>
       </body>

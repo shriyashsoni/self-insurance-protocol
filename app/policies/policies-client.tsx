@@ -3,10 +3,13 @@
 import { useState } from "react"
 import { PolicyCard } from "@/components/policy-card"
 import { PolicyPurchaseModal } from "@/components/policy-purchase-modal"
+import { PolicyCreationWizard } from "@/components/policy-creation-wizard"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Search, Filter, Plus, Sparkles } from "lucide-react"
+import { useWallet } from "@/lib/wallet/wallet-context"
 
 const availablePolicies = [
   {
@@ -102,7 +105,9 @@ export function PoliciesClient() {
   const [selectedType, setSelectedType] = useState<string>("all")
   const [selectedPolicy, setSelectedPolicy] = useState<(typeof availablePolicies)[0] | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isCreationWizardOpen, setIsCreationWizardOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const { isConnected } = useWallet()
 
   const filteredPolicies = availablePolicies.filter((policy) => {
     const matchesSearch =
@@ -124,22 +129,54 @@ export function PoliciesClient() {
     console.log("[v0] Travel policy purchase completed")
   }
 
+  const handlePolicyCreated = (newPolicy: any) => {
+    console.log("[v0] New policy created:", newPolicy)
+    // Refresh policies list or add to local state
+  }
+
   return (
     <div className="min-h-screen bg-background p-6 md:p-10">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-foreground text-balance">Travel Insurance Policies</h1>
+          <h1 className="text-4xl font-bold text-foreground text-balance">Insurance Policies</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">
-            Showcase travel insurance policies with 0.1 ETH coverage, powered by Self Protocol verification and
+            Browse available policies or create custom insurance coverage powered by Self Protocol verification and
             blockchain oracles
           </p>
         </div>
+
+        <Card className="border-primary/20 bg-primary/5">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  Create Custom Policy
+                </CardTitle>
+                <CardDescription>Design your own insurance policy with custom terms and conditions</CardDescription>
+              </div>
+              <Button
+                onClick={() => setIsCreationWizardOpen(true)}
+                disabled={!isConnected}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Create Policy
+              </Button>
+            </div>
+          </CardHeader>
+          {!isConnected && (
+            <CardContent>
+              <div className="text-sm text-muted-foreground">Connect your wallet to create custom policies</div>
+            </CardContent>
+          )}
+        </Card>
 
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search travel policies..."
+              placeholder="Search policies..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 bg-input border-border text-foreground"
@@ -186,7 +223,7 @@ export function PoliciesClient() {
 
         {filteredPolicies.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No travel policies found matching your criteria.</p>
+            <p className="text-muted-foreground">No policies found matching your criteria.</p>
             <Button
               variant="outline"
               onClick={() => {
@@ -205,6 +242,12 @@ export function PoliciesClient() {
           onClose={() => setIsModalOpen(false)}
           policy={selectedPolicy}
           onPurchaseComplete={handlePurchaseComplete}
+        />
+
+        <PolicyCreationWizard
+          isOpen={isCreationWizardOpen}
+          onClose={() => setIsCreationWizardOpen(false)}
+          onPolicyCreated={handlePolicyCreated}
         />
       </div>
     </div>
