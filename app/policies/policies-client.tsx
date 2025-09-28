@@ -3,91 +3,99 @@
 import { useState } from "react"
 import { PolicyCard } from "@/components/policy-card"
 import { PolicyPurchaseModal } from "@/components/policy-purchase-modal"
+import { PolicyCreationWizard } from "@/components/policy-creation-wizard"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Search, Filter, Plus, Sparkles } from "lucide-react"
+import { useWallet } from "@/lib/wallet/wallet-context"
 
 const availablePolicies = [
   {
-    id: "flight-delay-basic",
-    name: "Flight Delay Protection",
-    type: "flight" as const,
-    description: "Get compensated for flight delays over 2 hours",
-    premium: 25,
-    coverage: 500,
-    duration: "1 month",
+    id: "travel-delay-showcase",
+    name: "Travel Delay Protection",
+    type: "travel" as const,
+    description: "Get compensated for travel delays and cancellations",
+    premium: 0.01, // 0.01 ETH premium
+    coverage: 0.1, // 0.1 ETH coverage for showcase
+    duration: "1 trip",
     region: "Global",
     conditions: [
       "Flight delay > 2 hours",
+      "Train/bus delay > 1 hour",
       "Weather-related cancellations",
-      "Mechanical issues coverage",
       "Automatic payout via oracle",
     ],
   },
   {
-    id: "weather-crop-basic",
-    name: "Weather Crop Insurance",
-    type: "weather" as const,
-    description: "Protect your crops against extreme weather events",
-    premium: 150,
-    coverage: 5000,
-    duration: "6 months",
-    region: "North America",
-    conditions: [
-      "Rainfall below 50% of average",
-      "Temperature extremes",
-      "Hail damage coverage",
-      "Satellite data verification",
-    ],
-  },
-  {
-    id: "health-emergency-basic",
-    name: "Health Emergency Coverage",
-    type: "health" as const,
-    description: "Emergency medical expense coverage abroad",
-    premium: 75,
-    coverage: 10000,
-    duration: "3 months",
+    id: "travel-medical-showcase",
+    name: "Travel Medical Emergency",
+    type: "medical" as const,
+    description: "Emergency medical coverage while traveling abroad",
+    premium: 0.015, // 0.015 ETH premium
+    coverage: 0.1, // 0.1 ETH coverage for showcase
+    duration: "30 days",
     region: "Worldwide",
     conditions: ["Emergency hospitalization", "Medical evacuation", "Prescription coverage", "24/7 claim processing"],
   },
   {
-    id: "flight-premium",
-    name: "Premium Flight Protection",
-    type: "flight" as const,
-    description: "Comprehensive flight protection with higher coverage",
-    premium: 50,
-    coverage: 1500,
-    duration: "3 months",
+    id: "baggage-protection-showcase",
+    name: "Baggage Protection",
+    type: "baggage" as const,
+    description: "Protection against lost, stolen, or delayed baggage",
+    premium: 0.005, // 0.005 ETH premium
+    coverage: 0.1, // 0.1 ETH coverage for showcase
+    duration: "1 trip",
     region: "Global",
-    conditions: ["Flight delay > 1 hour", "Baggage delay coverage", "Trip cancellation", "Premium customer support"],
+    conditions: [
+      "Baggage delay > 12 hours",
+      "Lost or stolen items",
+      "Damaged luggage coverage",
+      "Instant verification via airline APIs",
+    ],
   },
   {
-    id: "weather-hurricane",
-    name: "Hurricane Protection",
+    id: "trip-cancellation-showcase",
+    name: "Trip Cancellation Insurance",
+    type: "cancellation" as const,
+    description: "Coverage for non-refundable trip expenses",
+    premium: 0.02, // 0.02 ETH premium
+    coverage: 0.1, // 0.1 ETH coverage for showcase
+    duration: "1 trip",
+    region: "International",
+    conditions: ["Illness or injury", "Natural disasters", "Travel advisories", "Verifiable credential required"],
+  },
+  {
+    id: "weather-travel-showcase",
+    name: "Weather Travel Disruption",
     type: "weather" as const,
-    description: "Specialized coverage for hurricane damage",
-    premium: 200,
-    coverage: 15000,
-    duration: "12 months",
-    region: "Atlantic Coast",
-    conditions: ["Category 2+ hurricane", "Wind speed > 96 mph", "Storm surge damage", "NOAA data verification"],
+    description: "Protection against weather-related travel disruptions",
+    premium: 0.008, // 0.008 ETH premium
+    coverage: 0.1, // 0.1 ETH coverage for showcase
+    duration: "1 trip",
+    region: "Global",
+    conditions: [
+      "Severe weather warnings",
+      "Airport closures",
+      "Natural disaster declarations",
+      "Real-time weather oracle data",
+    ],
   },
   {
-    id: "health-travel",
-    name: "Travel Health Plus",
-    type: "health" as const,
-    description: "Comprehensive health coverage for travelers",
-    premium: 120,
-    coverage: 25000,
-    duration: "6 months",
+    id: "visa-rejection-showcase",
+    name: "Visa Rejection Coverage",
+    type: "visa" as const,
+    description: "Reimbursement for visa rejection expenses",
+    premium: 0.012, // 0.012 ETH premium
+    coverage: 0.1, // 0.1 ETH coverage for showcase
+    duration: "Application period",
     region: "International",
     conditions: [
-      "Emergency medical treatment",
-      "Dental emergency coverage",
-      "Mental health support",
-      "Telemedicine access",
+      "Visa application rejection",
+      "Embassy fee reimbursement",
+      "Document preparation costs",
+      "Government API verification",
     ],
   },
 ]
@@ -97,7 +105,9 @@ export function PoliciesClient() {
   const [selectedType, setSelectedType] = useState<string>("all")
   const [selectedPolicy, setSelectedPolicy] = useState<(typeof availablePolicies)[0] | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isCreationWizardOpen, setIsCreationWizardOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const { isConnected } = useWallet()
 
   const filteredPolicies = availablePolicies.filter((policy) => {
     const matchesSearch =
@@ -116,19 +126,51 @@ export function PoliciesClient() {
   }
 
   const handlePurchaseComplete = () => {
-    // Refresh policies or redirect to dashboard
-    console.log("[v0] Policy purchase completed")
+    console.log("[v0] Travel policy purchase completed")
+  }
+
+  const handlePolicyCreated = (newPolicy: any) => {
+    console.log("[v0] New policy created:", newPolicy)
+    // Refresh policies list or add to local state
   }
 
   return (
     <div className="min-h-screen bg-background p-6 md:p-10">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-foreground">Insurance Policies</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Choose from our parametric insurance policies powered by blockchain oracles and Self Protocol verification
+          <h1 className="text-4xl font-bold text-foreground text-balance">Insurance Policies</h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">
+            Browse available policies or create custom insurance coverage powered by Self Protocol verification and
+            blockchain oracles
           </p>
         </div>
+
+        <Card className="border-primary/20 bg-primary/5">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  Create Custom Policy
+                </CardTitle>
+                <CardDescription>Design your own insurance policy with custom terms and conditions</CardDescription>
+              </div>
+              <Button
+                onClick={() => setIsCreationWizardOpen(true)}
+                disabled={!isConnected}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Create Policy
+              </Button>
+            </div>
+          </CardHeader>
+          {!isConnected && (
+            <CardContent>
+              <div className="text-sm text-muted-foreground">Connect your wallet to create custom policies</div>
+            </CardContent>
+          )}
+        </Card>
 
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="relative flex-1 max-w-md">
@@ -150,14 +192,23 @@ export function PoliciesClient() {
                 <SelectItem value="all" className="text-popover-foreground">
                   All Types
                 </SelectItem>
-                <SelectItem value="flight" className="text-popover-foreground">
-                  Flight
+                <SelectItem value="travel" className="text-popover-foreground">
+                  Travel
+                </SelectItem>
+                <SelectItem value="medical" className="text-popover-foreground">
+                  Medical
+                </SelectItem>
+                <SelectItem value="baggage" className="text-popover-foreground">
+                  Baggage
+                </SelectItem>
+                <SelectItem value="cancellation" className="text-popover-foreground">
+                  Cancellation
                 </SelectItem>
                 <SelectItem value="weather" className="text-popover-foreground">
                   Weather
                 </SelectItem>
-                <SelectItem value="health" className="text-popover-foreground">
-                  Health
+                <SelectItem value="visa" className="text-popover-foreground">
+                  Visa
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -191,6 +242,12 @@ export function PoliciesClient() {
           onClose={() => setIsModalOpen(false)}
           policy={selectedPolicy}
           onPurchaseComplete={handlePurchaseComplete}
+        />
+
+        <PolicyCreationWizard
+          isOpen={isCreationWizardOpen}
+          onClose={() => setIsCreationWizardOpen(false)}
+          onPolicyCreated={handlePolicyCreated}
         />
       </div>
     </div>

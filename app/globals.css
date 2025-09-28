@@ -4,81 +4,94 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated theme to match dark fintech design inspiration */
-  --background: oklch(0.08 0 0); /* Very dark background */
-  --foreground: oklch(0.98 0 0); /* Near white text */
-  --card: oklch(0.12 0 0); /* Dark card background */
-  --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.12 0 0);
-  --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.7 0.15 240); /* Blue accent */
+  /* Travel Insurance Protocol Design System - Professional trust with travel-focused colors */
+  --background: oklch(0.98 0.01 240); /* Clean off-white background */
+  --foreground: oklch(0.15 0.02 240); /* Deep navy text */
+  --card: oklch(1 0 0); /* Pure white cards */
+  --card-foreground: oklch(0.15 0.02 240);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.02 240);
+  --primary: oklch(0.55 0.18 220); /* Professional blue primary */
   --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.18 0 0); /* Slightly lighter dark */
-  --secondary-foreground: oklch(0.98 0 0);
-  --muted: oklch(0.15 0 0);
-  --muted-foreground: oklch(0.65 0 0); /* Muted gray text */
-  --accent: oklch(0.6 0.2 160); /* Green accent for success states */
-  --accent-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.92 0.02 240); /* Light background */
+  --secondary-foreground: oklch(0.15 0.02 240);
+  --muted: oklch(0.88 0.02 240);
+  --muted-foreground: oklch(0.45 0.02 240); /* Muted text */
+  --accent: oklch(0.65 0.15 200); /* Sky blue accent */
+  --accent-foreground: oklch(0.15 0.02 240);
   --destructive: oklch(0.6 0.25 25); /* Red for errors */
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.25 0 0); /* Dark borders */
-  --input: oklch(0.18 0 0);
-  --ring: oklch(0.7 0.15 240); /* Blue focus ring */
-  --chart-1: oklch(0.7 0.15 240);
-  --chart-2: oklch(0.6 0.2 160);
-  --chart-3: oklch(0.75 0.2 60);
-  --chart-4: oklch(0.65 0.2 300);
-  --chart-5: oklch(0.7 0.2 20);
+  --border: oklch(0.85 0.02 240); /* Soft borders */
+  --input: oklch(0.95 0.01 240);
+  --ring: oklch(0.55 0.18 220); /* Blue focus ring */
+  --chart-1: oklch(0.55 0.18 220); /* Blue */
+  --chart-2: oklch(0.65 0.15 200); /* Sky blue */
+  --chart-3: oklch(0.6 0.15 160); /* Teal */
+  --chart-4: oklch(0.6 0.15 330); /* Pink accent */
+  --chart-5: oklch(0.5 0.15 180); /* Teal accent */
   --radius: 0.75rem;
-  --sidebar: oklch(0.1 0 0);
-  --sidebar-foreground: oklch(0.98 0 0);
-  --sidebar-primary: oklch(0.7 0.15 240);
+  --sidebar: oklch(0.96 0.01 240);
+  --sidebar-foreground: oklch(0.15 0.02 240);
+  --sidebar-primary: oklch(0.55 0.18 220);
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.18 0 0);
-  --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(0.25 0 0);
-  --sidebar-ring: oklch(0.7 0.15 240);
+  --sidebar-accent: oklch(0.92 0.02 240);
+  --sidebar-accent-foreground: oklch(0.15 0.02 240);
+  --sidebar-border: oklch(0.85 0.02 240);
+  --sidebar-ring: oklch(0.55 0.18 220);
+
+  /* Travel-specific color tokens */
+  --travel-flight: oklch(0.55 0.18 220); /* Blue for flights */
+  --travel-protection: oklch(0.65 0.15 200); /* Sky blue protection */
+  --travel-success: oklch(0.6 0.2 160); /* Green success */
+  --travel-warning: oklch(0.7 0.2 60); /* Yellow warning */
+  --travel-baggage: oklch(0.6 0.15 330); /* Pink for baggage */
 }
 
 .dark {
-  /* Dark mode uses same values as root for consistent dark theme */
-  --background: oklch(0.08 0 0);
+  /* Dark mode with travel theme */
+  --background: oklch(0.08 0.02 240);
   --foreground: oklch(0.98 0 0);
-  --card: oklch(0.12 0 0);
+  --card: oklch(0.12 0.02 240);
   --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.12 0 0);
+  --popover: oklch(0.12 0.02 240);
   --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.7 0.15 240);
+  --primary: oklch(0.65 0.18 220);
   --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.18 0 0);
+  --secondary: oklch(0.15 0.02 240);
   --secondary-foreground: oklch(0.98 0 0);
-  --muted: oklch(0.15 0 0);
+  --muted: oklch(0.18 0.02 240);
   --muted-foreground: oklch(0.65 0 0);
-  --accent: oklch(0.6 0.2 160);
-  --accent-foreground: oklch(0.98 0 0);
+  --accent: oklch(0.65 0.15 200);
+  --accent-foreground: oklch(0.15 0.02 240);
   --destructive: oklch(0.6 0.25 25);
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.25 0 0);
-  --input: oklch(0.18 0 0);
-  --ring: oklch(0.7 0.15 240);
-  --chart-1: oklch(0.7 0.15 240);
-  --chart-2: oklch(0.6 0.2 160);
-  --chart-3: oklch(0.75 0.2 60);
-  --chart-4: oklch(0.65 0.2 300);
-  --chart-5: oklch(0.7 0.2 20);
-  --sidebar: oklch(0.1 0 0);
+  --border: oklch(0.25 0.02 240);
+  --input: oklch(0.18 0.02 240);
+  --ring: oklch(0.65 0.18 220);
+  --chart-1: oklch(0.65 0.18 220);
+  --chart-2: oklch(0.65 0.15 200);
+  --chart-3: oklch(0.6 0.15 160);
+  --chart-4: oklch(0.6 0.15 330);
+  --chart-5: oklch(0.5 0.15 180);
+  --sidebar: oklch(0.1 0.02 240);
   --sidebar-foreground: oklch(0.98 0 0);
-  --sidebar-primary: oklch(0.7 0.15 240);
+  --sidebar-primary: oklch(0.65 0.18 220);
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.18 0 0);
+  --sidebar-accent: oklch(0.15 0.02 240);
   --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(0.25 0 0);
-  --sidebar-ring: oklch(0.7 0.15 240);
+  --sidebar-border: oklch(0.25 0.02 240);
+  --sidebar-ring: oklch(0.65 0.18 220);
+
+  --travel-flight: oklch(0.65 0.18 220);
+  --travel-protection: oklch(0.65 0.15 200);
+  --travel-success: oklch(0.6 0.2 160);
+  --travel-warning: oklch(0.7 0.2 60);
+  --travel-baggage: oklch(0.6 0.15 330);
 }
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -115,6 +128,13 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Travel-specific utilities */
+  --color-travel-flight: var(--travel-flight);
+  --color-travel-protection: var(--travel-protection);
+  --color-travel-success: var(--travel-success);
+  --color-travel-warning: var(--travel-warning);
+  --color-travel-baggage: var(--travel-baggage);
 }
 
 @layer base {
@@ -122,6 +142,76 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
+
+  /* Travel Insurance Protocol specific styles */
+  .travel-gradient {
+    background: linear-gradient(135deg, oklch(0.55 0.18 220) 0%, oklch(0.65 0.15 200) 100%);
+  }
+
+  .travel-card {
+    @apply bg-card/80 backdrop-blur-sm rounded-lg p-6 border border-border/50 transition-all duration-300 hover:bg-card hover:border-primary/20 hover:shadow-lg;
+  }
+
+  .travel-stat {
+    @apply text-center space-y-2;
+  }
+
+  .travel-stat-number {
+    @apply text-3xl font-bold text-foreground;
+  }
+
+  .travel-stat-label {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .flight-icon {
+    color: oklch(0.55 0.18 220);
+  }
+
+  .protection-icon {
+    color: oklch(0.65 0.15 200);
+  }
+
+  .baggage-icon {
+    color: oklch(0.6 0.15 330);
+  }
+
+  .success-icon {
+    color: oklch(0.6 0.2 160);
+  }
+}
+
+/* Animation keyframes for travel-themed interactions */
+@keyframes travel-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+@keyframes flight-path {
+  0% {
+    transform: translateX(-10px) translateY(0);
+  }
+  50% {
+    transform: translateX(5px) translateY(-5px);
+  }
+  100% {
+    transform: translateX(10px) translateY(0);
+  }
+}
+
+.travel-animation {
+  animation: travel-pulse 2s ease-in-out infinite;
+}
+
+.flight-animation {
+  animation: flight-path 3s ease-in-out infinite;
 }
